@@ -18,7 +18,7 @@ import { usePokemons } from '../../utility/hooks';
 export type HomeParams = undefined;
 
 const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
-  const { loading, error, pokemons } = usePokemons();
+  const { loading, moreLoading, error, pokemons, fetchMore } = usePokemons();
   const dispatch = useAppDispatch();
   const isDarkTheme = useIsDarkTheme();
 
@@ -56,7 +56,13 @@ const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
           <Text>An error has occurred. Please try again</Text>
         </View>
       ) : (
-        pokemons && <PokemonList data={pokemons} />
+        pokemons && (
+          <PokemonList
+            data={pokemons}
+            onEndReached={() => fetchMore()}
+            loading={moreLoading}
+          />
+        )
       )}
     </>
   );

@@ -1,4 +1,5 @@
-import { useApi } from './axios';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { pokeApi } from './axios';
 
 export type PokemonResponse = {
   count: number;
@@ -45,15 +46,30 @@ interface Type {
 }
 
 export const usePokemons = () => {
-  const { error, loading, data } = useApi<PokemonResponse>('pokemon');
+  const { isError, isLoading, isFetchingNextPage, data, fetchNextPage } =
+    useInfiniteQuery<PokemonResponse>({
+      queryKey: ['pokemon'],
+      queryFn: ({ pageParam }) =>
+        pokeApi.get(pageParam ?? 'pokemon').then(response => response.data),
+      getNextPageParam: result => result.next,
+    });
 
-  return { error, loading, pokemons: data?.results };
+  return {
+    error: isError,
+    loading: isLoading,
+    moreLoading: isFetchingNextPage,
+    pokemons: data?.pages.flatMap(page => page.results),
+    fetchMore: fetchNextPage,
+  };
 };
 
 export const usePokemonDetail = (url: string) => {
-  const { error, loading, data } = useApi<PokemonDetail>(url);
+  const { isError, isLoading, data } = useQuery<PokemonDetail>({
+    queryKey: ['pokemon', url],
+    queryFn: () => pokeApi.get(url).then(response => response.data),
+  });
 
-  return { error, loading, detail: data };
+  return { error: isError, loading: isLoading, detail: data };
 };
 
 export const usePokemonSprite = (url: string) => {

@@ -1,5 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { QueryClient } from '@tanstack/query-core';
+import { QueryClientProvider } from '@tanstack/react-query';
 import React, { createContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
@@ -12,15 +14,18 @@ import Favorite from './views/favorite/Favorite';
 import Home from './views/home/Home';
 
 export const DarkTheme = createContext(false);
+const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Providers = () => {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <NavigationContainer>
-          <App />
-        </NavigationContainer>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <App />
+          </NavigationContainer>
+        </QueryClientProvider>
       </PersistGate>
     </Provider>
   );

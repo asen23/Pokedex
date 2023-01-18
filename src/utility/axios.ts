@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const pokeApi = axios.create({
+export const pokeApi = axios.create({
   baseURL: 'https://pokeapi.co/api/v2/',
 });
 
