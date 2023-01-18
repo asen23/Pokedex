@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -6,10 +6,16 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import { DarkTheme } from '../../App';
-import { RootStackScreenProps } from '../../config/routeParam';
+import HeartFilled from '../../assets/HeartFilled';
+import HeartOutline from '../../assets/HeartOutline';
+import { RootStackScreenProps } from '../../config/navigation/routeParam';
+import { useAppDispatch, useAppSelector } from '../../config/redux/redux';
+import { useIsDarkTheme } from '../../config/redux/theme';
+import { add, remove, selectFavorites } from '../favorite/redux';
+import { Pokemon } from '../home/Home';
 import DetailRow from './components/DetailRow';
 
 interface PokemonDetail {
@@ -45,25 +51,52 @@ interface Type {
 }
 
 export type DetailParams = {
-  url: string;
+  pokemon: Pokemon;
 };
 
 const Detail = ({
   route: {
-    params: { url },
+    params: { pokemon },
   },
+  navigation,
 }: RootStackScreenProps<'Detail'>) => {
   const [data, setData] = useState<PokemonDetail | null>(null);
-  const isDarkTheme = useContext(DarkTheme);
+  const isDarkTheme = useIsDarkTheme();
+  const dispatch = useAppDispatch();
+  const favorites = useAppSelector(selectFavorites);
+  const isFavorite = favorites.filter(f => f.url === pokemon.url).length === 1;
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch(url);
+      const response = await fetch(pokemon.url);
       const pokemonResponse: PokemonDetail = await response.json();
       setData(pokemonResponse);
     };
     getData();
-  }, [url]);
+  }, [pokemon]);
+
+  const FavoriteButton = useMemo(
+    () => (
+      <TouchableOpacity
+        onPress={() =>
+          isFavorite ? dispatch(remove(pokemon)) : dispatch(add(pokemon))
+        }
+      >
+        {isFavorite ? (
+          <HeartFilled fill={isDarkTheme ? 'white' : undefined} />
+        ) : (
+          <HeartOutline fill={isDarkTheme ? 'white' : undefined} />
+        )}
+      </TouchableOpacity>
+    ),
+    [dispatch, isFavorite, pokemon, isDarkTheme],
+  );
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => FavoriteButton,
+    });
+  }, [navigation, FavoriteButton]);
 
   return (
     <>

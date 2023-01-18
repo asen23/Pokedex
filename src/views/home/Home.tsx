@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { RootStackScreenProps } from '../../config/routeParam';
-import HomeRow from './components/HomeRow';
+import Dark from '../../assets/Dark';
+import HeartOutline from '../../assets/HeartOutline';
+import Light from '../../assets/Light';
+import PokemonList from '../../components/PokemonList';
+import { RootStackScreenProps } from '../../config/navigation/routeParam';
+import { useAppDispatch } from '../../config/redux/redux';
+import { toggle, useIsDarkTheme } from '../../config/redux/theme';
 
 type PokemonResponse = {
   count: number;
@@ -16,7 +20,7 @@ type PokemonResponse = {
   results: Pokemon[];
 };
 
-type Pokemon = {
+export type Pokemon = {
   name: string;
   url: string;
 };
@@ -25,6 +29,25 @@ export type HomeParams = undefined;
 
 const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
   const [data, setData] = useState<Pokemon[] | null>(null);
+  const dispatch = useAppDispatch();
+  const isDarkTheme = useIsDarkTheme();
+
+  const HeaderRight = useMemo(
+    () => (
+      <View style={styles.headerRight}>
+        <TouchableOpacity onPress={() => navigation.navigate('Favorite')}>
+          <HeartOutline fill={isDarkTheme ? 'white' : undefined} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => dispatch(toggle())}
+          style={styles.themeToggle}
+        >
+          {isDarkTheme ? <Dark /> : <Light />}
+        </TouchableOpacity>
+      </View>
+    ),
+    [dispatch, navigation, isDarkTheme],
+  );
 
   useEffect(() => {
     const getData = async () => {
@@ -35,24 +58,16 @@ const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
     getData();
   }, []);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => HeaderRight,
+    });
+  }, [navigation, HeaderRight]);
+
   return (
     <>
       {data ? (
-        <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('Detail', {
-                  url: item.url,
-                })
-              }
-            >
-              <HomeRow name={item.name} url={item.url} />
-            </TouchableOpacity>
-          )}
-          keyExtractor={item => item.url}
-        />
+        <PokemonList data={data} />
       ) : (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" />
@@ -89,6 +104,12 @@ const styles = StyleSheet.create({
   },
   icons: {
     flexDirection: 'row',
+  },
+  headerRight: {
+    flexDirection: 'row',
+  },
+  themeToggle: {
+    marginLeft: 8,
   },
 });
 

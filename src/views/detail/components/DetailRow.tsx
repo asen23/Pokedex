@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { DarkTheme } from '../../../App';
+import { useIsDarkTheme } from '../../../config/redux/theme';
 
 type DetailRowProps = {
   title: string;
@@ -8,7 +8,7 @@ type DetailRowProps = {
 };
 
 const DetailRow = ({ title, description }: DetailRowProps) => {
-  const isDarkTheme = useContext(DarkTheme);
+  const isDarkTheme = useIsDarkTheme();
   return (
     <>
       <Text style={[styles.title, isDarkTheme ? styles.textDark : {}]}>

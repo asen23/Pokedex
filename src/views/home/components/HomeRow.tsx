@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
-import { DarkTheme } from '../../../App';
+import { useIsDarkTheme } from '../../../config/redux/theme';
 
 type PokemonDetail = {
   sprites: Sprite;
@@ -17,7 +17,7 @@ type HomeRowProps = {
 
 const HomeRow = ({ name, url }: HomeRowProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const isDarkTheme = useContext(DarkTheme);
+  const isDarkTheme = useIsDarkTheme();
 
   useEffect(() => {
     const getData = async () => {
