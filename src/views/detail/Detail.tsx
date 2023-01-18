@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { DarkTheme } from '../../App';
 import ArrowLeft from '../../assets/ArrowLeft';
 import DetailRow from './components/DetailRow';
 
@@ -48,11 +49,11 @@ interface Type {
 type DetailProps = {
   url: string;
   setDetailUrl: (url: string | null) => void;
-  isDarkTheme: boolean;
 };
 
-const Detail = ({ url, setDetailUrl, isDarkTheme }: DetailProps) => {
+const Detail = ({ url, setDetailUrl }: DetailProps) => {
   const [data, setData] = useState<PokemonDetail | null>(null);
+  const isDarkTheme = useContext(DarkTheme);
 
   useEffect(() => {
     const getData = async () => {
@@ -120,32 +121,15 @@ const Detail = ({ url, setDetailUrl, isDarkTheme }: DetailProps) => {
           </View>
           <View style={styles.container}>
             <View style={styles.separator} />
-            <DetailRow
-              isDarkTheme={isDarkTheme}
-              title="Name"
-              description={data.name}
-            />
+            <DetailRow title="Name" description={data.name} />
+            <View style={styles.separator} />
+            <DetailRow title="Species" description={data.species.name} />
+            <View style={styles.separator} />
+            <DetailRow title="Height" description={`${data.height}`} />
+            <View style={styles.separator} />
+            <DetailRow title="Weight" description={`${data.weight}`} />
             <View style={styles.separator} />
             <DetailRow
-              isDarkTheme={isDarkTheme}
-              title="Species"
-              description={data.species.name}
-            />
-            <View style={styles.separator} />
-            <DetailRow
-              isDarkTheme={isDarkTheme}
-              title="Height"
-              description={`${data.height}`}
-            />
-            <View style={styles.separator} />
-            <DetailRow
-              isDarkTheme={isDarkTheme}
-              title="Weight"
-              description={`${data.weight}`}
-            />
-            <View style={styles.separator} />
-            <DetailRow
-              isDarkTheme={isDarkTheme}
               title="BaseExperience"
               description={`${data.base_experience}`}
             />

@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { DarkTheme } from '../../App';
 import Dark from '../../assets/Dark';
 import Light from '../../assets/Light';
 import HomeRow from './components/HomeRow';
@@ -24,13 +31,13 @@ type Pokemon = {
 };
 
 type HomeProps = {
-  isDarkTheme: boolean;
   setDarkTheme: Dispatch<SetStateAction<boolean>>;
   setDetailUrl: (id: string) => void;
 };
 
-const Home = ({ isDarkTheme, setDarkTheme, setDetailUrl }: HomeProps) => {
+const Home = ({ setDarkTheme, setDetailUrl }: HomeProps) => {
   const [data, setData] = useState<Pokemon[] | null>(null);
+  const isDarkTheme = useContext(DarkTheme);
 
   useEffect(() => {
     const getData = async () => {
@@ -58,11 +65,7 @@ const Home = ({ isDarkTheme, setDarkTheme, setDetailUrl }: HomeProps) => {
           data={data}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => setDetailUrl(item.url)}>
-              <HomeRow
-                name={item.name}
-                url={item.url}
-                isDarkTheme={isDarkTheme}
-              />
+              <HomeRow name={item.name} url={item.url} />
             </TouchableOpacity>
           )}
           keyExtractor={item => item.url}

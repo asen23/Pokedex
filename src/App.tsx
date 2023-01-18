@@ -1,29 +1,25 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import Detail from './views/detail/Detail';
 import Home from './views/home/Home';
+
+export const DarkTheme = createContext(false);
 
 const App = () => {
   const [detailUrl, setDetailUrl] = useState<string | null>(null);
   const [isDarkTheme, setDarkTheme] = useState(false);
   return (
-    <SafeAreaView
-      style={[styles.background, isDarkTheme ? styles.backgroundDark : {}]}
-    >
-      {detailUrl ? (
-        <Detail
-          url={detailUrl}
-          setDetailUrl={setDetailUrl}
-          isDarkTheme={isDarkTheme}
-        />
-      ) : (
-        <Home
-          setDetailUrl={setDetailUrl}
-          isDarkTheme={isDarkTheme}
-          setDarkTheme={setDarkTheme}
-        />
-      )}
-    </SafeAreaView>
+    <DarkTheme.Provider value={isDarkTheme}>
+      <SafeAreaView
+        style={[styles.background, isDarkTheme ? styles.backgroundDark : {}]}
+      >
+        {detailUrl ? (
+          <Detail url={detailUrl} setDetailUrl={setDetailUrl} />
+        ) : (
+          <Home setDetailUrl={setDetailUrl} setDarkTheme={setDarkTheme} />
+        )}
+      </SafeAreaView>
+    </DarkTheme.Provider>
   );
 };
 

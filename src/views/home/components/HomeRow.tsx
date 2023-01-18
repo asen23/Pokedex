@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { DarkTheme } from '../../../App';
 
 type PokemonDetail = {
   sprites: Sprite;
@@ -12,11 +13,11 @@ type Sprite = {
 type HomeRowProps = {
   name: string;
   url: string;
-  isDarkTheme: boolean;
 };
 
-const HomeRow = ({ name, url, isDarkTheme }: HomeRowProps) => {
+const HomeRow = ({ name, url }: HomeRowProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const isDarkTheme = useContext(DarkTheme);
 
   useEffect(() => {
     const getData = async () => {
