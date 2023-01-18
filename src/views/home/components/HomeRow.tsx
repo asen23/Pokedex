@@ -12,9 +12,10 @@ type Sprite = {
 type HomeRowProps = {
   name: string;
   url: string;
+  isDarkTheme: boolean;
 };
 
-const HomeRow = ({ name, url }: HomeRowProps) => {
+const HomeRow = ({ name, url, isDarkTheme }: HomeRowProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -37,7 +38,9 @@ const HomeRow = ({ name, url }: HomeRowProps) => {
       ) : (
         <ActivityIndicator style={styles.tinyLogo} />
       )}
-      <Text style={styles.cardText}>{name}</Text>
+      <Text style={[styles.cardText, isDarkTheme ? styles.textDark : {}]}>
+        {name}
+      </Text>
     </View>
   );
 };
@@ -57,6 +60,9 @@ const styles = StyleSheet.create({
   cardText: {
     textTransform: 'capitalize',
     marginLeft: 16,
+  },
+  textDark: {
+    color: 'white',
   },
   tinyLogo: {
     width: 50,

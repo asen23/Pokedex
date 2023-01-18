@@ -48,9 +48,10 @@ interface Type {
 type DetailProps = {
   url: string;
   setDetailUrl: (url: string | null) => void;
+  isDarkTheme: boolean;
 };
 
-const Detail = ({ url, setDetailUrl }: DetailProps) => {
+const Detail = ({ url, setDetailUrl, isDarkTheme }: DetailProps) => {
   const [data, setData] = useState<PokemonDetail | null>(null);
 
   useEffect(() => {
@@ -76,11 +77,18 @@ const Detail = ({ url, setDetailUrl }: DetailProps) => {
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header, isDarkTheme ? styles.headerDark : {}]}>
         <TouchableOpacity onPress={() => setDetailUrl(null)}>
-          <ArrowLeft style={styles.arrow} />
+          <ArrowLeft
+            style={styles.arrow}
+            fill={isDarkTheme ? 'white' : undefined}
+          />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Detail</Text>
+        <Text
+          style={[styles.headerText, isDarkTheme ? styles.headerTextDark : {}]}
+        >
+          Detail
+        </Text>
       </View>
       {data ? (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -97,30 +105,69 @@ const Detail = ({ url, setDetailUrl }: DetailProps) => {
             {data.types
               .map(type => type.type)
               .map(type => (
-                <View style={styles.typePill} key={type.url}>
-                  <Text>{type.name}</Text>
+                <View
+                  style={[
+                    styles.typePill,
+                    isDarkTheme ? styles.typePillDark : {},
+                  ]}
+                  key={type.url}
+                >
+                  <Text style={isDarkTheme ? styles.typePillTextDark : {}}>
+                    {type.name}
+                  </Text>
                 </View>
               ))}
           </View>
           <View style={styles.container}>
             <View style={styles.separator} />
-            <DetailRow title="Name" description={data.name} />
-            <View style={styles.separator} />
-            <DetailRow title="Species" description={data.species.name} />
-            <View style={styles.separator} />
-            <DetailRow title="Height" description={`${data.height}`} />
-            <View style={styles.separator} />
-            <DetailRow title="Weight" description={`${data.weight}`} />
+            <DetailRow
+              isDarkTheme={isDarkTheme}
+              title="Name"
+              description={data.name}
+            />
             <View style={styles.separator} />
             <DetailRow
+              isDarkTheme={isDarkTheme}
+              title="Species"
+              description={data.species.name}
+            />
+            <View style={styles.separator} />
+            <DetailRow
+              isDarkTheme={isDarkTheme}
+              title="Height"
+              description={`${data.height}`}
+            />
+            <View style={styles.separator} />
+            <DetailRow
+              isDarkTheme={isDarkTheme}
+              title="Weight"
+              description={`${data.weight}`}
+            />
+            <View style={styles.separator} />
+            <DetailRow
+              isDarkTheme={isDarkTheme}
               title="BaseExperience"
               description={`${data.base_experience}`}
             />
             <View style={styles.separator} />
-            <Text style={styles.abilityTitle}>Abilities</Text>
+            <Text
+              style={[
+                styles.abilityTitle,
+                isDarkTheme ? styles.abilityTitleDark : {},
+              ]}
+            >
+              Abilities
+            </Text>
             {data.abilities.map(ability => (
               <View style={styles.abilityRow} key={ability.ability.url}>
-                <Text style={styles.abilityText}>○ {ability.ability.name}</Text>
+                <Text
+                  style={[
+                    styles.abilityText,
+                    isDarkTheme ? styles.abilityTextDark : {},
+                  ]}
+                >
+                  ○ {ability.ability.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -144,10 +191,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  headerDark: {
+    borderColor: '#fff',
+  },
   headerText: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 24,
+  },
+  headerTextDark: {
+    color: 'white',
   },
   arrow: {
     paddingVertical: 8,
@@ -161,6 +214,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     marginHorizontal: -8,
   },
+  separatorDark: {
+    backgroundColor: 'white',
+  },
   typeContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -173,10 +229,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     margin: 4,
   },
+  typePillDark: {
+    borderColor: 'white',
+  },
+  typePillTextDark: {
+    color: 'white',
+  },
   abilityTitle: {
     color: 'black',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  abilityTitleDark: {
+    color: 'white',
   },
   abilityRow: {
     marginVertical: 4,
@@ -184,6 +249,9 @@ const styles = StyleSheet.create({
   abilityText: {
     fontSize: 16,
     textTransform: 'capitalize',
+  },
+  abilityTextDark: {
+    color: 'white',
   },
   loadingContainer: {
     flex: 1,

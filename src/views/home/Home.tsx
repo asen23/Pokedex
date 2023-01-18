@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Dark from '../../assets/Dark';
+import Light from '../../assets/Light';
 import HomeRow from './components/HomeRow';
 
 type PokemonResponse = {
@@ -22,10 +24,12 @@ type Pokemon = {
 };
 
 type HomeProps = {
+  isDarkTheme: boolean;
+  setDarkTheme: Dispatch<SetStateAction<boolean>>;
   setDetailUrl: (id: string) => void;
 };
 
-const Home = ({ setDetailUrl }: HomeProps) => {
+const Home = ({ isDarkTheme, setDarkTheme, setDetailUrl }: HomeProps) => {
   const [data, setData] = useState<Pokemon[] | null>(null);
 
   useEffect(() => {
@@ -39,15 +43,26 @@ const Home = ({ setDetailUrl }: HomeProps) => {
 
   return (
     <>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Home</Text>
+      <View style={[styles.header, isDarkTheme ? styles.headerDark : {}]}>
+        <Text style={[styles.headerText, isDarkTheme ? styles.textDark : {}]}>
+          Home
+        </Text>
+        <View style={styles.icons}>
+          <TouchableOpacity onPress={() => setDarkTheme(v => !v)}>
+            {isDarkTheme ? <Dark /> : <Light />}
+          </TouchableOpacity>
+        </View>
       </View>
       {data ? (
         <FlatList
           data={data}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => setDetailUrl(item.url)}>
-              <HomeRow name={item.name} url={item.url} />
+              <HomeRow
+                name={item.name}
+                url={item.url}
+                isDarkTheme={isDarkTheme}
+              />
             </TouchableOpacity>
           )}
           keyExtractor={item => item.url}
@@ -66,16 +81,28 @@ const styles = StyleSheet.create({
     padding: 8,
     borderBottomWidth: 1,
     borderColor: '#bbb',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerDark: {
+    borderColor: '#fff',
   },
   headerText: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 24,
   },
+  textDark: {
+    color: 'white',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  icons: {
+    flexDirection: 'row',
   },
 });
 
