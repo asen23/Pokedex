@@ -4,6 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import HomeRow from './components/HomeRow';
@@ -20,7 +21,11 @@ type Pokemon = {
   url: string;
 };
 
-const Home = () => {
+type HomeProps = {
+  setDetailUrl: (id: string) => void;
+};
+
+const Home = ({ setDetailUrl }: HomeProps) => {
   const [data, setData] = useState<Pokemon[] | null>(null);
 
   useEffect(() => {
@@ -40,7 +45,11 @@ const Home = () => {
       {data ? (
         <FlatList
           data={data}
-          renderItem={({ item }) => <HomeRow name={item.name} url={item.url} />}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => setDetailUrl(item.url)}>
+              <HomeRow name={item.name} url={item.url} />
+            </TouchableOpacity>
+          )}
           keyExtractor={item => item.url}
         />
       ) : (

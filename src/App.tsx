@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import Home from './home/Home';
+import Detail from './views/detail/Detail';
+import Home from './views/home/Home';
 
 const App = () => {
+  const [detailUrl, setDetailUrl] = useState<string | null>(null);
   return (
     <SafeAreaView style={styles.background}>
-      <Home />
+      {detailUrl ? (
+        <Detail url={detailUrl} setDetailUrl={setDetailUrl} />
+      ) : (
+        <Home setDetailUrl={setDetailUrl} />
+      )}
     </SafeAreaView>
   );
 };
