@@ -1,63 +1,53 @@
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../config/redux/redux';
+import {
+  fetchPokemon,
+  selectPokemonDetail,
+  selectPokemonError,
+  selectPokemonLoading,
+} from '../views/detail/redux/redux';
+import {
+  fetchMorePokemons,
+  fetchPokemons,
+  selectPokemons,
+  selectPokemonsError,
+  selectPokemonsLoading,
+  selectPokemonsMoreLoading,
+} from '../views/home/redux/redux';
 import { useApi } from './axios';
-
-export type PokemonResponse = {
-  count: number;
-  next: string;
-  previous: null;
-  results: Pokemon[];
-};
-
-export type Pokemon = {
-  name: string;
-  url: string;
-};
-
-export interface PokemonDetail {
-  abilities: Ability[];
-  base_experience: number;
-  height: number;
-  id: number;
-  name: string;
-  species: Species;
-  sprites: Sprites;
-  types: Type[];
-  weight: number;
-}
-
-interface Ability {
-  ability: Species;
-  is_hidden: boolean;
-  slot: number;
-}
-
-interface Species {
-  name: string;
-  url: string;
-}
-
-interface Sprites {
-  front_default: string;
-}
-
-interface Type {
-  slot: number;
-  type: Species;
-}
+import { PokemonDetail } from './type';
 
 export const usePokemons = () => {
-  const { error, loading, data } = useApi<PokemonResponse>('pokemon');
+  const pokemons = useSelector(selectPokemons);
+  const loading = useSelector(selectPokemonsLoading);
+  const moreLoading = useSelector(selectPokemonsMoreLoading);
+  const error = useSelector(selectPokemonsError);
+  const dispatch = useAppDispatch();
+  const fetchMore = () => dispatch(fetchMorePokemons());
 
-  return { error, loading, pokemons: data?.results };
+  useEffect(() => {
+    dispatch(fetchPokemons());
+  }, [dispatch]);
+
+  return { error, loading, moreLoading, pokemons, fetchMore };
 };
 
 export const usePokemonDetail = (url: string) => {
-  const { error, loading, data } = useApi<PokemonDetail>(url);
+  const detail = useSelector(selectPokemonDetail);
+  const loading = useSelector(selectPokemonLoading);
+  const error = useSelector(selectPokemonError);
+  const dispatch = useAppDispatch();
 
-  return { error, loading, detail: data };
+  useEffect(() => {
+    dispatch(fetchPokemon(url));
+  }, [dispatch, url]);
+
+  return { error, loading, detail };
 };
 
 export const usePokemonSprite = (url: string) => {
-  const { error, loading, detail } = usePokemonDetail(url);
+  const { error, loading, data } = useApi<PokemonDetail>(url);
 
-  return { error, loading, sprite: detail?.sprites.front_default };
+  return { error, loading, sprite: data?.sprites.front_default };
 };

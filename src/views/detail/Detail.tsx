@@ -14,7 +14,8 @@ import HeartOutline from '../../assets/HeartOutline';
 import { RootStackScreenProps } from '../../config/navigation/routeParam';
 import { useAppDispatch, useAppSelector } from '../../config/redux/redux';
 import { useIsDarkTheme } from '../../config/redux/theme';
-import { Pokemon, usePokemonDetail } from '../../utility/hooks';
+import { usePokemonDetail } from '../../utility/hooks';
+import { Pokemon } from '../../utility/type';
 import { add, remove, selectFavorites } from '../favorite/redux';
 import DetailRow from './components/DetailRow';
 
