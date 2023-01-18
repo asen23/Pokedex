@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/core';
 import React from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
+import { Pokemon } from '../utility/hooks';
 import HomeRow from '../views/home/components/HomeRow';
-import { Pokemon } from '../views/home/Home';
 
 type PokemonListProps = {
   data: Pokemon[];

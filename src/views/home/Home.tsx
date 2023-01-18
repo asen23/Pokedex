@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -12,23 +13,12 @@ import PokemonList from '../../components/PokemonList';
 import { RootStackScreenProps } from '../../config/navigation/routeParam';
 import { useAppDispatch } from '../../config/redux/redux';
 import { toggle, useIsDarkTheme } from '../../config/redux/theme';
-
-type PokemonResponse = {
-  count: number;
-  next: string;
-  previous: null;
-  results: Pokemon[];
-};
-
-export type Pokemon = {
-  name: string;
-  url: string;
-};
+import { usePokemons } from '../../utility/hooks';
 
 export type HomeParams = undefined;
 
 const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
-  const [data, setData] = useState<Pokemon[] | null>(null);
+  const { loading, error, pokemons } = usePokemons();
   const dispatch = useAppDispatch();
   const isDarkTheme = useIsDarkTheme();
 
@@ -50,15 +40,6 @@ const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
   );
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await fetch('https://pokeapi.co/api/v2/pokemon');
-      const pokemonResponse: PokemonResponse = await response.json();
-      setData(pokemonResponse.results);
-    };
-    getData();
-  }, []);
-
-  useEffect(() => {
     navigation.setOptions({
       headerRight: () => HeaderRight,
     });
@@ -66,12 +47,16 @@ const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
 
   return (
     <>
-      {data ? (
-        <PokemonList data={data} />
-      ) : (
+      {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" />
         </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text>An error has occurred. Please try again</Text>
+        </View>
+      ) : (
+        pokemons && <PokemonList data={pokemons} />
       )}
     </>
   );

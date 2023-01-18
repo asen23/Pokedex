@@ -1,14 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { useIsDarkTheme } from '../../../config/redux/theme';
-
-type PokemonDetail = {
-  sprites: Sprite;
-};
-
-type Sprite = {
-  front_default: string;
-};
+import { usePokemonSprite } from '../../../utility/hooks';
 
 type HomeRowProps = {
   name: string;
@@ -16,28 +9,24 @@ type HomeRowProps = {
 };
 
 const HomeRow = ({ name, url }: HomeRowProps) => {
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const { loading, error, sprite } = usePokemonSprite(url);
   const isDarkTheme = useIsDarkTheme();
 
-  useEffect(() => {
-    const getData = async () => {
-      const response = await fetch(url);
-      const pokemonResponse: PokemonDetail = await response.json();
-      setImageUrl(pokemonResponse.sprites.front_default);
-    };
-    getData();
-  }, [url]);
   return (
     <View style={styles.card}>
-      {imageUrl ? (
-        <Image
-          style={styles.tinyLogo}
-          source={{
-            uri: imageUrl,
-          }}
-        />
-      ) : (
+      {loading ? (
         <ActivityIndicator style={styles.tinyLogo} />
+      ) : error ? (
+        <Text>An error has occurred</Text>
+      ) : (
+        sprite && (
+          <Image
+            style={styles.tinyLogo}
+            source={{
+              uri: sprite,
+            }}
+          />
+        )
       )}
       <Text style={[styles.cardText, isDarkTheme ? styles.textDark : {}]}>
         {name}
