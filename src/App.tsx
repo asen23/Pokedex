@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { QueryClient } from '@tanstack/query-core';
 import { QueryClientProvider } from '@tanstack/react-query';
+import PokeGuess from 'pokeguess';
 import React, { createContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
@@ -53,6 +54,7 @@ const App = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Detail" component={Detail} />
       <Stack.Screen name="Favorite" component={Favorite} />
+      <Stack.Screen name="PokeGuess" component={PokeGuess} />
     </Stack.Navigator>
   );
 };

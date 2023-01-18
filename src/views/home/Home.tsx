@@ -57,11 +57,13 @@ const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
         </View>
       ) : (
         pokemons && (
-          <PokemonList
-            data={pokemons}
-            onEndReached={() => fetchMore()}
-            loading={moreLoading}
-          />
+          <>
+            <PokemonList
+              data={pokemons}
+              onEndReached={() => fetchMore()}
+              loading={moreLoading}
+            />
+          </>
         )
       )}
     </>
