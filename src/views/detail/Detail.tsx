@@ -1,17 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  BackHandler,
   Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { DarkTheme } from '../../App';
-import ArrowLeft from '../../assets/ArrowLeft';
+import { RootStackScreenProps } from '../../config/routeParam';
 import DetailRow from './components/DetailRow';
 
 interface PokemonDetail {
@@ -46,12 +44,15 @@ interface Type {
   type: Species;
 }
 
-type DetailProps = {
+export type DetailParams = {
   url: string;
-  setDetailUrl: (url: string | null) => void;
 };
 
-const Detail = ({ url, setDetailUrl }: DetailProps) => {
+const Detail = ({
+  route: {
+    params: { url },
+  },
+}: RootStackScreenProps<'Detail'>) => {
   const [data, setData] = useState<PokemonDetail | null>(null);
   const isDarkTheme = useContext(DarkTheme);
 
@@ -64,33 +65,8 @@ const Detail = ({ url, setDetailUrl }: DetailProps) => {
     getData();
   }, [url]);
 
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        setDetailUrl(null);
-        return true;
-      },
-    );
-
-    () => subscription.remove();
-  }, [setDetailUrl]);
-
   return (
     <>
-      <View style={[styles.header, isDarkTheme ? styles.headerDark : {}]}>
-        <TouchableOpacity onPress={() => setDetailUrl(null)}>
-          <ArrowLeft
-            style={styles.arrow}
-            fill={isDarkTheme ? 'white' : undefined}
-          />
-        </TouchableOpacity>
-        <Text
-          style={[styles.headerText, isDarkTheme ? styles.headerTextDark : {}]}
-        >
-          Detail
-        </Text>
-      </View>
       {data ? (
         <ScrollView showsVerticalScrollIndicator={false}>
           <Image

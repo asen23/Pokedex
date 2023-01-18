@@ -1,21 +1,12 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { DarkTheme } from '../../App';
-import Dark from '../../assets/Dark';
-import Light from '../../assets/Light';
+import { RootStackScreenProps } from '../../config/routeParam';
 import HomeRow from './components/HomeRow';
 
 type PokemonResponse = {
@@ -30,14 +21,10 @@ type Pokemon = {
   url: string;
 };
 
-type HomeProps = {
-  setDarkTheme: Dispatch<SetStateAction<boolean>>;
-  setDetailUrl: (id: string) => void;
-};
+export type HomeParams = undefined;
 
-const Home = ({ setDarkTheme, setDetailUrl }: HomeProps) => {
+const Home = ({ navigation }: RootStackScreenProps<'Home'>) => {
   const [data, setData] = useState<Pokemon[] | null>(null);
-  const isDarkTheme = useContext(DarkTheme);
 
   useEffect(() => {
     const getData = async () => {
@@ -50,21 +37,17 @@ const Home = ({ setDarkTheme, setDetailUrl }: HomeProps) => {
 
   return (
     <>
-      <View style={[styles.header, isDarkTheme ? styles.headerDark : {}]}>
-        <Text style={[styles.headerText, isDarkTheme ? styles.textDark : {}]}>
-          Home
-        </Text>
-        <View style={styles.icons}>
-          <TouchableOpacity onPress={() => setDarkTheme(v => !v)}>
-            {isDarkTheme ? <Dark /> : <Light />}
-          </TouchableOpacity>
-        </View>
-      </View>
       {data ? (
         <FlatList
           data={data}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => setDetailUrl(item.url)}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Detail', {
+                  url: item.url,
+                })
+              }
+            >
               <HomeRow name={item.name} url={item.url} />
             </TouchableOpacity>
           )}
